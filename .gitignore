@@ -3,3 +3,7 @@
 
 # Uncompressed tab-delimited data
 *.tsv
+
+# Build
+.gradle/
+target/

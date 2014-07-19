@@ -1,0 +1,73 @@
+defaultTasks "clean", "resources", "testAllJobs"
+
+def targetDir           = new File("./target")
+def testResultsDirPath  = "./target/results"
+def testResultsDir      = new File(testResultsDirPath)
+
+def permittedJobNames = ["student_times", "study_groups", "popular_tags", "average_length"]
+
+// -------------------- Helpers --------------------
+
+def toSnakeCase = { text ->
+	text.replaceAll( /([A-Z])/, /_$1/ ).toLowerCase().replaceAll( /^_/, '' )
+}
+
+def readFileData = { filePath ->
+	def lines = []
+	new File(filePath).eachLine { line ->
+		lines << line.replaceAll(/[\t ]+/, "|")
+	}
+	lines
+}
+
+// -------------------- Tasks --------------------
+
+task clean() {
+	delete targetDir
+}
+
+task resources << {
+	testResultsDir.mkdirs()
+}
+
+tasks.addRule("Pattern: test<JobName>Job. E.g. testStudentTimesJob, testStudyGroupsJob, testPopularTagsJob, testAverageLengthJob", ) { String taskName ->
+	if (taskName.matches(/test(\w+)Job/)) {
+		task(taskName, type: Exec) {
+			dependsOn   = ['resources']
+
+			def matcher     = taskName =~ /test(\w+)Job/
+			def jobName     = toSnakeCase(matcher[0][1])
+
+			def mapper      = "./code/${jobName}_mapper.py"
+			def reducer     = "./code/${jobName}_reducer.py"
+			def data        = "./test/student_test_posts.csv"
+			def results     = "${testResultsDirPath}/${jobName}_result.txt"
+
+			commandLine "bash", "-c", "cat $data | python $mapper | sort | python $reducer > $results"
+
+			doLast  {
+				def expected = "./test/expected_${jobName}_result.txt"
+				logger.quiet "Comparing actual and expected result: "
+				logger.quiet "  Actual:   $results"
+				logger.quiet "  Expected: $expected"
+
+				def actualLines   = readFileData(results)
+				def expectedLines = readFileData(expected)
+				actualLines.eachWithIndex { actualLine, i ->
+					def expectedLine = expectedLines[i]
+					assert actualLine == expectedLine, "Unexpected result on line $i"
+				}
+
+			}
+		}
+	}
+}
+
+task testAllJobs() {
+	group "testPosts"
+	description "Tests each of the map reduce jobs using ./test/student_test_posts.csv"
+	dependsOn clean,
+		testStudentTimesJob
+//		testStudyGroupsJobtestPopularTagsJob,
+//		testAverageLengthJob
+}
