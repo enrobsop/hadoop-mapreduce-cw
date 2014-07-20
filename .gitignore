@@ -6,4 +6,4 @@
 
 # Build
 .gradle/
-target/
+build/

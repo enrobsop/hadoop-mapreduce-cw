@@ -1,8 +1,18 @@
-defaultTasks "clean", "resources", "testAllJobs"
+apply plugin: 'distribution'
 
-def targetDir           = new File("./target")
-def testResultsDirPath  = "./target/results"
+defaultTasks "clean", "resources", "testAllJobs", "codeDistTar"
+
+def testResultsDirPath  = "./build/results"
 def testResultsDir      = new File(testResultsDirPath)
+
+distributions {
+	code {
+		baseName = 'code'
+		contents {
+			from { './code' }
+		}
+	}
+}
 
 // -------------------- Helpers --------------------
 
@@ -41,10 +51,6 @@ def assertContentsMatch = { expected, actual ->
 
 // -------------------- Tasks --------------------
 
-task clean() {
-	delete targetDir
-}
-
 task resources << {
 	testResultsDir.mkdirs()
 }
@@ -77,6 +83,7 @@ task testAllJobs() {
 	description "Tests each of the map reduce jobs using ./test/student_test_posts.csv"
 	dependsOn clean,
 		testStudentTimesJob
-//		testStudyGroupsJobtestPopularTagsJob,
+//		testStudyGroupsJob
+//      testPopularTagsJob,
 //		testAverageLengthJob
 }

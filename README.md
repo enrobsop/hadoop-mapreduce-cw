@@ -24,13 +24,14 @@ To run everything, type: `gradle`. That's it.
 
 Command | Description
 ------- | -----------
-`gradle`    | Runs default build.
+`gradle`    | Runs default build which runs the tests (below) and creates `./build/distributions/code.tar`.
 `gradle tasks` | Lists gradle tasks available
 `gradle testStudentTimesJob` | Tests the student times map reduce Python code using `./test/student_test_posts.csv` as input. The output is verified against `./test/expected_student_times_result.txt`.
 `gradle testStudyGroups` | See `testStudentTimes`.
 `gradle testPopularTags` | See `testStudentTimes`.
 `gradle testAverageLength` | See `testStudentTimes`.
 `gradle testAllJobs` | Tests all map reduce jobs using the `student_test_posts.csv` as described above.
+`gradle codeDistTar` | Archives `./code` into `./build/distributions/code.tar`.
 
 Note: 
 The live (non-test) data is version controlled in tar.gz format. Use `tar xvfz *.gz` on archives in the `data` directory before moving to HDFS and running jobs.
