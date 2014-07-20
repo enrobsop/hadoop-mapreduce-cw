@@ -2,13 +2,14 @@
 
 import sys
 import csv
-from dateutil import parser
+from datetime import datetime
+
 import myutil
 
 # ------------------ Helper functions ------------------
 
 def hour_of_day(dateStr):
-    return parser.parse(dateStr).hour
+    return int(datetime.strptime(dateStr[:13], '%Y-%m-%d %H').strftime('%H'))
 
 # ------------------ Mapper ------------------
 
