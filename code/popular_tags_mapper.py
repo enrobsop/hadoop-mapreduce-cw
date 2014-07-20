@@ -2,7 +2,11 @@
 
 import sys
 import csv
-import myutil
+
+# ------------------ Helper ------------------
+
+def is_header(line):
+    return line[0] == "id"
 
 # ------------------ Mapper ------------------
 
@@ -11,13 +15,13 @@ def mapper():
 
     for line in reader:
 
-        if not myutil.is_header(line):
+        if not is_header(line):
             try:
                 id, title, tagnames, authorId, body, nodeType, parentId, absParentId, addedAt, score, stateAtring, lastEditedId, lastActivityById, lastActivityAt, activeRevisionId, extra, extraRefId, extraCount, marked = line
 
                 if nodeType == 'question':
                     for tagname in tagnames.split():
-                        myutil.write(tagname, 1)
+                        print "{0}\t{1}".format(tagname, 1)
 
             except ValueError as e:
                 print "Error: ", e, " Line: ", line

@@ -3,9 +3,11 @@
 import sys
 import csv
 import operator
-import myutil
 
 # ------------------ Helper functions ------------------
+
+def has_id_changed(id, previous_id):
+    return previous_id != None and id != previous_id
 
 # Increments the frequency count in a dictionary for a given key
 def increment_frequency_count(key, frequencies):
@@ -26,11 +28,14 @@ def find_most_frequent(frequencies):
             break
     return sorted(result)
 
+def write(key, value):
+    print "{0}\t{1}".format(key, value)
+
 # Writes the reducer output using multiple lines when 'equal' max hour frequencies
 def write_lines(id, frequencies):
     mostFrequent = find_most_frequent(frequencies)
     for hour in mostFrequent:
-        myutil.write(id, hour)
+        write(id, hour)
 
 # ------------------ Reducer ------------------
 
@@ -44,7 +49,7 @@ def reducer():
         try:
             id, hour = line
 
-            if myutil.has_id_changed(id, previousId):
+            if has_id_changed(id, previousId):
                 write_lines(previousId, frequencies)
                 frequencies = {}
 

@@ -2,7 +2,14 @@
 
 import sys
 import csv
-import myutil
+
+# ------------------ Helper ------------------
+
+def has_id_changed(id, previous_id):
+    return previous_id != None and id != previous_id
+
+def write(key, value):
+    print "{0}\t{1}".format(key, value)
 
 # ------------------ Reducer ------------------
 
@@ -16,8 +23,8 @@ def reducer():
         try:
             id, authorId = line
 
-            if myutil.has_id_changed(id, previousId):
-                myutil.write(previousId, students)
+            if has_id_changed(id, previousId):
+                write(previousId, students)
                 students = []
 
             students.append(int(authorId))
@@ -27,6 +34,6 @@ def reducer():
             print "Error: ", e, " Line: ", line
 
     # Write final ID
-    myutil.write(id, students)
+    write(id, students)
 
 reducer()

@@ -2,16 +2,18 @@
 
 import sys
 import csv
-import myutil
 import operator
 
 # ------------------ Helper functions ------------------
 
+def has_id_changed(id, previous_id):
+    return previous_id != None and id != previous_id
+
 def write_top_10(tags):
     tagsSorted = sorted(tags.iteritems(), key=operator.itemgetter(1), reverse=True)
 
-    for tag, frequencey in tagsSorted[:10]:
-        print tag, frequencey
+    for tag, frequency in tagsSorted[:10]:
+        print tag, frequency
 
     return None
 
@@ -28,7 +30,7 @@ def reducer():
         try:
             tagname, n = line  # n = 1 without a combiner, n >= 1 with a combiner
 
-            if myutil.has_id_changed(tagname, previous_tag_name):
+            if has_id_changed(tagname, previous_tag_name):
                 tags[previous_tag_name] = count
                 count = 0
 
