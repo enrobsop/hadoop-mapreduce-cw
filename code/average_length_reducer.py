@@ -2,11 +2,9 @@
 
 import sys
 import csv
+import myutil
 
 # ------------------ Helper functions ------------------
-
-def has_id_changed(id, previous_id):
-    return previous_id != None and id != previous_id
 
 def write_lengths(key, questionLength, answerLengthTotal, answerCount):
     value = None
@@ -15,7 +13,7 @@ def write_lengths(key, questionLength, answerLengthTotal, answerCount):
         value = "{0}\t{1:.1f}".format(questionLength, average_answer_length)
     else:
         value = str(questionLength) + "\t0"
-    print "{0}\t{1}".format(key, value)
+    myutil.write(key, value)
 
 # ------------------ Reducer ------------------
 
@@ -32,7 +30,7 @@ def reducer():
         try:
             id, nodeType, length = line
 
-            if has_id_changed(id, previousId):
+            if myutil.has_id_changed(id, previousId):
                 write_lengths(previousId, questionLength, answerLengthTotal, answerCount)
                 questionLength = answerLengthTotal = answerCount = 0
 
