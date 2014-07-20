@@ -84,6 +84,6 @@ task testAllJobs() {
 	dependsOn clean,
 		testStudentTimesJob,
 		testAverageLengthJob,
-//		testStudyGroupsJob,
-      testPopularTagsJob
+		testStudyGroupsJob,
+        testPopularTagsJob
 }
