@@ -4,20 +4,39 @@ def targetDir           = new File("./target")
 def testResultsDirPath  = "./target/results"
 def testResultsDir      = new File(testResultsDirPath)
 
-def permittedJobNames = ["student_times", "study_groups", "popular_tags", "average_length"]
-
 // -------------------- Helpers --------------------
 
 def toSnakeCase = { text ->
 	text.replaceAll( /([A-Z])/, /_$1/ ).toLowerCase().replaceAll( /^_/, '' )
 }
 
-def readFileData = { filePath ->
+def getLines = { filePath ->
 	def lines = []
 	new File(filePath).eachLine { line ->
 		lines << line.replaceAll(/[\t ]+/, "|")
 	}
 	lines
+}
+
+def assertContentsMatch = { expected, actual ->
+
+	logger.quiet "Comparing actual and expected results: "
+	logger.quiet "  Actual:   $actual"
+	logger.quiet "  Expected: $expected"
+
+	def actualLines   = getLines(actual)
+	def expectedLines = getLines(expected)
+
+	assert actualLines.size() == expectedLines.size(),
+		"Files are of different sizes! Expected ${expectedLines.size()} but found ${actualLines.size()}"
+
+	actualLines.eachWithIndex { actualLine, i ->
+		def expectedLine = expectedLines[i]
+		assert actualLine == expectedLine, "Unexpected result on line $i"
+	}
+
+	logger.quiet "SUCCESS: Contents match!"
+
 }
 
 // -------------------- Tasks --------------------
@@ -47,17 +66,7 @@ tasks.addRule("Pattern: test<JobName>Job. E.g. testStudentTimesJob, testStudyGro
 
 			doLast  {
 				def expected = "./test/expected_${jobName}_result.txt"
-				logger.quiet "Comparing actual and expected result: "
-				logger.quiet "  Actual:   $results"
-				logger.quiet "  Expected: $expected"
-
-				def actualLines   = readFileData(results)
-				def expectedLines = readFileData(expected)
-				actualLines.eachWithIndex { actualLine, i ->
-					def expectedLine = expectedLines[i]
-					assert actualLine == expectedLine, "Unexpected result on line $i"
-				}
-
+				assertContentsMatch expected, results
 			}
 		}
 	}
