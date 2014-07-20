@@ -83,7 +83,7 @@ task testAllJobs() {
 	description "Tests each of the map reduce jobs using ./test/student_test_posts.csv"
 	dependsOn clean,
 		testStudentTimesJob,
-		testAverageLengthJob
-//		testStudyGroupsJob
-//      testPopularTagsJob
+		testAverageLengthJob,
+//		testStudyGroupsJob,
+      testPopularTagsJob
 }
